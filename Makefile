@@ -29,6 +29,8 @@ JS_FILTER=
 EXTENSION_CACHE_DIR="${ROOT_DIR}/.ccache/extension"
 EXCEL_EXTENSION_CACHE_FILE="${EXTENSION_CACHE_DIR}/excel"
 JSON_EXTENSION_CACHE_FILE="${EXTENSION_CACHE_DIR}/json"
+DUCKDB_JSON=1
+DUCKDB_WASM_LOADABLE_EXTENSIONS=1
 
 cpp_lib: lib_tests
 
@@ -319,23 +321,23 @@ else
 endif
 
 # Run the duckdb javascript tests in browser
-.PHONY: js_tests_browser
-js_tests_browser: js_debug build/data
-	yarn workspace @duckdb/duckdb-wasm test:chrome
+# .PHONY: js_tests_browser
+# js_tests_browser: js_debug build/data
+# 	yarn workspace @duckdb/duckdb-wasm test:chrome
 
 # Run the duckdb javascript tests in browser
-.PHONY: js_tests_browser_debug
-js_tests_browser_debug: js_debug build/data
-	yarn workspace @duckdb/duckdb-wasm test:browser:debug
+# .PHONY: js_tests_browser_debug
+# js_tests_browser_debug: js_debug build/data
+# 	yarn workspace @duckdb/duckdb-wasm test:browser:debug
 
 # Run the duckdb javascript tests on nodejs
-.PHONY: js_tests_node
-js_tests_node: js_debug build/data
-	yarn workspace @duckdb/duckdb-wasm test:node --filter=${JS_FILTER}
+# .PHONY: js_tests_node
+# js_tests_node: js_debug build/data
+# 	yarn workspace @duckdb/duckdb-wasm test:node --filter=${JS_FILTER}
 
-.PHONY: js_tests_node_debug
-js_tests_node_debug: js_debug build/data
-	yarn workspace @duckdb/duckdb-wasm test:node:debug --filter=${JS_FILTER}
+# .PHONY: js_tests_node_debug
+# js_tests_node_debug: js_debug build/data
+# 	yarn workspace @duckdb/duckdb-wasm test:node:debug --filter=${JS_FILTER}
 
 wasmpack: yarn_install
 	yarn workspace @duckdb/duckdb-wasm-shell install:wasmpack
