@@ -36,6 +36,7 @@ export enum WorkerRequestType {
     PING = 'PING',
     POLL_PENDING_QUERY = 'POLL_PENDING_QUERY',
     REGISTER_FILE_BUFFER = 'REGISTER_FILE_BUFFER',
+    REGISTER_OPFS_HANDLE = 'REGISTER_OPFS_HANDLE',
     REGISTER_FILE_HANDLE = 'REGISTER_FILE_HANDLE',
     REGISTER_FILE_URL = 'REGISTER_FILE_URL',
     RESET = 'RESET',
@@ -134,6 +135,7 @@ export type WorkerRequestVariant =
     | WorkerRequest<WorkerRequestType.POLL_PENDING_QUERY, number>
     | WorkerRequest<WorkerRequestType.REGISTER_FILE_BUFFER, [string, Uint8Array]>
     | WorkerRequest<WorkerRequestType.REGISTER_FILE_HANDLE, [string, any, DuckDBDataProtocol, boolean]>
+    | WorkerRequest<WorkerRequestType.REGISTER_OPFS_HANDLE, [string, DuckDBDataProtocol]>
     | WorkerRequest<WorkerRequestType.REGISTER_FILE_URL, [string, string, DuckDBDataProtocol, boolean]>
     | WorkerRequest<WorkerRequestType.RESET, null>
     | WorkerRequest<WorkerRequestType.RUN_PREPARED, [number, number, any[]]>
@@ -192,6 +194,7 @@ export type WorkerTaskVariant =
     | WorkerTask<WorkerRequestType.PING, null, null>
     | WorkerTask<WorkerRequestType.REGISTER_FILE_BUFFER, [string, Uint8Array], null>
     | WorkerTask<WorkerRequestType.REGISTER_FILE_HANDLE, [string, any, DuckDBDataProtocol, boolean], null>
+    | WorkerTask<WorkerRequestType.REGISTER_OPFS_HANDLE, [string, DuckDBDataProtocol], null>
     | WorkerTask<WorkerRequestType.REGISTER_FILE_URL, [string, string, DuckDBDataProtocol, boolean], null>
     | WorkerTask<WorkerRequestType.GLOB_FILE_INFOS, string, WebFile[]>
     | WorkerTask<WorkerRequestType.RESET, null, null>

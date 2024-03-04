@@ -14,6 +14,7 @@ export interface AsyncDuckDBBindings {
         protocol: DuckDBDataProtocol,
         directIO: boolean,
     ): Promise<void>;
+    registerOpfsFileHandle(path: string, protocol: DuckDBDataProtocol): Promise<void>;
     copyFileToPath(name: string, out: string): Promise<void>;
     copyFileToBuffer(name: string): Promise<Uint8Array>;
 

@@ -171,6 +171,7 @@ export class AsyncDuckDB implements AsyncDuckDBBindings {
             case WorkerRequestType.OPEN:
             case WorkerRequestType.PING:
             case WorkerRequestType.REGISTER_FILE_BUFFER:
+            case WorkerRequestType.REGISTER_OPFS_HANDLE:
             case WorkerRequestType.REGISTER_FILE_HANDLE:
             case WorkerRequestType.REGISTER_FILE_URL:
             case WorkerRequestType.RESET:
@@ -524,6 +525,14 @@ export class AsyncDuckDB implements AsyncDuckDBBindings {
             [name, buffer],
         );
         await this.postTask(task, [buffer.buffer]);
+    }
+
+    public async registerOpfsFileHandle(path: string, protocol: DuckDBDataProtocol): Promise<void> {
+        const task = new WorkerTask<WorkerRequestType.REGISTER_OPFS_HANDLE, [string, DuckDBDataProtocol], null>(
+            WorkerRequestType.REGISTER_OPFS_HANDLE, 
+            [path, protocol]
+        );
+        await this.postTask(task, []);
     }
 
     /** Register a file handle. */

@@ -127,7 +127,6 @@ export const BROWSER_RUNTIME: DuckDBRuntime & {
                 }
                 const fileHandle = await dirHandle.getFileHandle(fileName, { create: false }).catch(e => {
                     if (e?.name === 'NotFoundError') {
-                        console.log(`File ${path} does not exists yet, creating`);
                         return dirHandle.getFileHandle(fileName, { create: true });
                     }
                     throw e;
@@ -148,6 +147,52 @@ export const BROWSER_RUNTIME: DuckDBRuntime & {
             return result;
         }
         throw new Error(`Unsupported protocol ${protocol} for path ${dbPath} with protocol ${protocol}`);
+    },
+
+    async prepareOpfsFileHandle(path: string, protocol: DuckDBDataProtocol): Promise<PreparedDBFileHandle> {
+        if (protocol === DuckDBDataProtocol.BROWSER_FSACCESS) {
+            if (BROWSER_RUNTIME._files.has(path)) {
+                return {
+                    path,
+                    handle: BROWSER_RUNTIME._files.get(path),
+                    fromCached: true,
+                };
+            }
+
+            const opfsRoot = await navigator.storage.getDirectory();
+            let dirHandle: FileSystemDirectoryHandle = opfsRoot;
+            let fileName = path;
+
+            if (PATH_SEP_REGEX.test(path)) {
+                const folders = path.split(PATH_SEP_REGEX);
+                fileName = folders.pop()!;
+                if (!fileName) {
+                    throw new Error(`Invalid path ${path}`);
+                }
+                // mkdir -p
+                for (const folder of folders) {
+                    dirHandle = await dirHandle.getDirectoryHandle(folder, { create: true });
+                }
+            }
+
+            const fileHandle = await dirHandle.getFileHandle(fileName, { create: false })
+            .catch(e => {
+                if (e?.name === 'NotFoundError') {
+                    return dirHandle.getFileHandle(fileName, { create: true });
+                }
+                throw e;
+            });
+
+            const handle = await fileHandle.createSyncAccessHandle();
+            BROWSER_RUNTIME._preparedHandles[path] = handle;
+
+            return {
+                path,
+                handle,
+                fromCached: false,
+            };
+        }
+        throw new Error(`Unsupported protocol ${protocol} for path ${path} with protocol ${protocol}`);
     },
 
     testPlatformFeature: (_mod: DuckDBModule, feature: number): boolean => {
@@ -338,7 +383,7 @@ export const BROWSER_RUNTIME: DuckDBRuntime & {
                     }
                     const result = mod._malloc(2 * 8);
                     const fileSize = handle.getSize();
-                    console.log(`[BROWSER_RUNTIME] opening ${file.fileName} with size ${fileSize}`);
+                    // console.log(`[BROWSER_RUNTIME] opening ${file.fileName} with size ${fileSize}`);
                     mod.HEAPF64[(result >> 3) + 0] = fileSize;
                     mod.HEAPF64[(result >> 3) + 1] = 0;
                     return result;

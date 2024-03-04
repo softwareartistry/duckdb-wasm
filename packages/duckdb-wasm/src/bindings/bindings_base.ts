@@ -5,7 +5,7 @@ import { InstantiationProgress } from './progress';
 import { DuckDBBindings } from './bindings_interface';
 import { DuckDBConnection } from './connection';
 import { StatusCode } from '../status';
-import { dropResponseBuffers, DuckDBRuntime, readString, callSRet, copyBuffer, DuckDBDataProtocol } from './runtime';
+import { dropResponseBuffers, DuckDBRuntime, readString, callSRet, copyBuffer, DuckDBDataProtocol, PreparedDBFileHandle } from './runtime';
 import { CSVInsertOptions, JSONInsertOptions, ArrowInsertOptions } from './insert_options';
 import { ScriptTokens } from './tokens';
 import { FileStatistics } from './file_stats';
@@ -162,6 +162,7 @@ export abstract class DuckDBBindingsBase implements DuckDBBindings {
     }
 
     /** Send a query and return the full result */
+    //TODO: lookup
     public runQuery(conn: number, text: string): Uint8Array {
         const [s, d, n] = callSRet(this.mod, 'duckdb_web_query_run', ['number', 'string'], [conn, text]);
         if (s !== StatusCode.SUCCESS) {
@@ -458,6 +459,18 @@ export abstract class DuckDBBindingsBase implements DuckDBBindings {
         }
         throw new Error(`prepareDBFileHandle: unsupported protocol ${protocol}`);
     }
+
+    public async registerOpfsFileHandle(path: string, protocol: DuckDBDataProtocol): Promise<void> {
+        if (protocol === DuckDBDataProtocol.BROWSER_FSACCESS && this._runtime.prepareOpfsFileHandle) {
+            const { handle, path: filePath, fromCached } = await this._runtime.prepareOpfsFileHandle(path, DuckDBDataProtocol.BROWSER_FSACCESS);
+            if (!fromCached && !this._runtime._files?.get(path)) {
+                await this.registerFileHandle(filePath, handle, DuckDBDataProtocol.BROWSER_FSACCESS, true);
+            }
+            return;
+        }
+        throw new Error(`prepareDBFileHandle: unsupported protocol ${protocol}`);
+    }
+
     /** Register a file object URL */
     public async registerFileHandle<HandleType>(
         name: string,

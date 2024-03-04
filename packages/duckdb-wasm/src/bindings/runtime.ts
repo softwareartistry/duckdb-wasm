@@ -154,6 +154,7 @@ export interface DuckDBRuntime {
     removeFile(mod: DuckDBModule, pathPtr: number, pathLen: number): void;
 
     prepareDBFileHandle?: (path: string, protocol: DuckDBDataProtocol) => Promise<PreparedDBFileHandle[]>;
+    prepareOpfsFileHandle?: (path: string, protocol: DuckDBDataProtocol) => Promise<PreparedDBFileHandle>;
 
     // Call a scalar UDF function
     callScalarUDF(

@@ -205,6 +205,7 @@ export abstract class AsyncDuckDBDispatcher implements Logger {
                     break;
                 }
                 case WorkerRequestType.RUN_QUERY: {
+                    //TODO: Lookup
                     const result = this._bindings.runQuery(request.data[0], request.data[1]);
                     this.postMessage(
                         {
@@ -324,6 +325,11 @@ export abstract class AsyncDuckDBDispatcher implements Logger {
 
                 case WorkerRequestType.REGISTER_FILE_BUFFER:
                     this._bindings.registerFileBuffer(request.data[0], request.data[1]);
+                    this.sendOK(request);
+                    break;
+
+                case WorkerRequestType.REGISTER_OPFS_HANDLE:
+                    await this._bindings.registerOpfsFileHandle(request.data[0], request.data[1]);
                     this.sendOK(request);
                     break;
 
