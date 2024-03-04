@@ -100,6 +100,7 @@ import { testBindings, testAsyncBindings } from './bindings.test';
 import { testBatchStream } from './batch_stream.test';
 import { testAsyncBatchStream } from './batch_stream_async.test';
 import { testFilesystem } from './filesystem.test';
+import { testOPFS } from './opfs.test';
 import { testArrowInsert, testArrowInsertAsync } from './insert_arrow.test';
 import { testJSONInsert, testJSONInsertAsync } from './insert_json.test';
 import { testCSVInsert, testCSVInsertAsync } from './insert_csv.test';
