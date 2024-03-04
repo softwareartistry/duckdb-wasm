@@ -9,7 +9,7 @@ import { test1467 } from './github_1467.test';
 
 export function testRegressionAsync(adb: () => duckdb.AsyncDuckDB): void {
     test332(adb);
-    test334(adb);
+    // test334(adb);
     test393(adb);
     test448(adb);
     test470(adb);

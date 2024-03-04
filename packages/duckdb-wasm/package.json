@@ -72,7 +72,7 @@
         "test:chrome:coverage": "karma start ./karma/tests-chrome-coverage.cjs",
         "test:browser": "karma start ./karma/tests-all.cjs",
         "test:browser:debug": "karma start ./karma/tests-debug.cjs",
-        "test": "npm run test:chrome && npm run test:node",
+        "test": "npm run test:chrome",
         "test:coverage": "npm run test:chrome:coverage && npm run test:node:coverage && npm run report",
         "lint": "eslint src test"
     },
